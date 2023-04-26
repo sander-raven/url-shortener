@@ -1,26 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-        <section>
-            <form method="post">
+        <div class="row">
+            <form class="col s12" method="post">
                 {% csrf_token %}
-                <div>
-                    {{ form.original_url }}
+                <div class="input-field col s9">
+                    {{ form }}
                 </div>
-                <div>
-                    <button type="submit">Shorten</button>
+                <div class="input-field col s3">
+                    <button type="submit" class="btn waves-effect waves-light">Shorten</button>
+                </div>
+                <div class="col s12">
+                    <p class="flow-text">Paste your URL into the input field and click the "Shorten" button.</p>
                 </div>
             </form>
-        </section>
+        </div>
     {% if errors %}
-        <section>
-            {{ errors }}
-        </section>
+        <div class="row">
+            <div class="card-panel red lighten-4 red-text text-darken-4">
+                {{ errors }}
+            </div>
+        </div>
     {% endif %}
     {% if new_url %}
-        <section>
-            <h2>Your short url: <a href="{{ new_url }}">{{ new_url }}</a></h2>
-            <h4>Original url: <a href="{{ original_url }}">{{ original_url }}</a></h4>
-        </section>
+        <div class="row">
+            <div class="card-panel">
+                <h4>Your short url: <a href="{{ new_url }}">{{ new_url }}</a></h4>
+                <h5>Original url: <a href="{{ original_url }}">{{ original_url }}</a></h5>
+            </div>
+        </div>
     {% endif %}
 {% endblock %}

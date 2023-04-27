@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="card-panel">
+        <h2>{{ user.username }}</h2>
+        <a href="{% url 'logout' %}">Log Out</a>
+    </div>
+    <div class="card-panel">
+        <h4>Short URL List</h4>
+        {% if object_list %}
+            <table class="highlight">
+                <thead>
+                <tr>
+                    <th>Short Code</th>
+                    <th>Original URL</th>
+                    <th>Created At</th>
+                    <th># of transitions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        <td><a href="{% url 'redirect' object.short_code %}">{{ object.short_code }}</a></td>
+                        <td><a href="{{ object.original_url }}">{{ object.original_url }}</a></td>
+                        <td>{{ object.created_at }}</td>
+                        <td>{{ object.number_of_transitions }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="flow-text">You don't have your own short urls yet.</p>
+        {% endif %}
+    </div>
+{% endblock %}

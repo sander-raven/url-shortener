@@ -18,10 +18,26 @@ def index_view(request):
                 owner = request.user
             else:
                 owner = None
-            short_url, _ = ShortURL.objects.get_or_create(
-                original_url=form.cleaned_data['original_url'],
-                owner=owner,
-            )
+            if form.cleaned_data['short_code']:
+                short_url, _ = ShortURL.objects.get_or_create(
+                    original_url=form.cleaned_data['original_url'],
+                    short_code=form.cleaned_data['short_code'],
+                    owner=owner,
+                )
+            else:
+                # short_url, _ = ShortURL.objects.get_or_create(
+                #     original_url=form.cleaned_data['original_url'],
+                #     owner=owner,
+                # )
+                short_url = ShortURL.objects.filter(
+                    original_url=form.cleaned_data['original_url'],
+                    owner=owner,
+                ).first()
+                if not short_url:
+                    short_url = ShortURL.objects.create(
+                        original_url=form.cleaned_data['original_url'],
+                        owner=owner,
+                    )
             context['original_url'] = short_url.original_url
             context['new_url'] = (
                 request.build_absolute_uri('/') + short_url.short_code
@@ -33,6 +49,6 @@ def index_view(request):
 
 
 def redirect_view(request, short_code):
-    short_url = get_object_or_404(ShortURL, short_code=short_code)
+    short_url = get_object_or_404(ShortURL, short_code__iexact=short_code)
     short_url.increase_number_of_transitions()
     return HttpResponseRedirect(short_url.original_url)

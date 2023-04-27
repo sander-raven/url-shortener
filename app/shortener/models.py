@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from shortener.utils import create_random_string, FORBIDDEN_SHORT_CODES
@@ -28,15 +29,26 @@ class ShortURL(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.short_code:
+            forbidden_short_codes = tuple(map(
+                str.lower, [''] + FORBIDDEN_SHORT_CODES
+            ))
             new_short_code = ''
-            short_codes = [''] + FORBIDDEN_SHORT_CODES
-            while new_short_code in short_codes:
+            short_codes = forbidden_short_codes
+            while new_short_code.lower() in short_codes:
                 new_short_code = create_random_string()
-                short_codes = self.__class__.objects.values_list(
-                    'short_code', flat=True
-                )
+                short_codes = tuple(map(
+                    str.lower, self.__class__.objects.values_list(
+                        'short_code', flat=True
+                    )
+                )) + forbidden_short_codes
             self.short_code = new_short_code
         super().save(*args, **kwargs)
+
+    def clean(self):
+        if self.__class__.objects.filter(short_code__iexact=self.short_code) \
+                .exclude(pk=self.pk).exists():
+            raise ValidationError('This short code already exists.')
+        return super().clean()
 
     def increase_number_of_transitions(self):
         self.number_of_transitions = models.F('number_of_transitions') + 1

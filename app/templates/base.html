@@ -11,8 +11,8 @@
 </head>
 <body>
     <header>
-        <nav>
-            <div class="nav-wrapper blue-grey">
+        <nav class="blue-grey">
+            <div class="nav-wrapper blue-grey container">
                 <a href="{% url 'index' %}" class="brand-logo center">URL Shortener</a>
                 <ul id="nav-mobile" class="right">
                     <li><a href="{% url 'profile' %}"><i class="large material-icons left">account_box</i>Profile</a></li>
@@ -27,6 +27,11 @@
         </div>
     </main>
     <footer class="page-footer blue-grey">
+        <div class="container">
+            <div class="row">
+                <h5 class="orange-text text-lighten-3">This site is a training project. Support for its functionality is not guaranteed!</h5>
+            </div>
+        </div>
         <div class="footer-copyright">
             <div class="container">
                 &copy; <a href="https://github.com/sander-raven" target="_blank" class="white-text">sander-raven</a>, {% now "Y" %}
